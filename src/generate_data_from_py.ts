@@ -22,7 +22,7 @@ for (const fname of files) {
         const raw = fs.readFileSync(SRC_DIR + '/' + fname, 'utf8');
         const parsed = parsePythonArray(raw);
 
-        const lengths = parsed.map(char => char.length);
+        const lengths = parsed.map((char) => char.length);
 
         const indices = parsed.map((char, idx) => {
             let found = text.indexOf(char);
@@ -37,7 +37,8 @@ for (const fname of files) {
     }
 }
 
-let max_length = 0, max_index = 0;
+let max_length = 0;
+let max_index = 0;
 for (const val of data.values()) {
     max_index = Math.max(max_index, ...val.indices);
     max_length = Math.max(max_length, ...val.lengths);
@@ -60,7 +61,7 @@ const length_mask = (1 << length_bits) - 1;
 const index_shift = SHIFT_LENGTH ? 0 : length_bits;
 const length_shift = SHIFT_LENGTH ? index_bits : 0;
 
-let combined = Object.create(null);
+const combined = Object.create(null);
 for (const [fname, val] of data) {
     const key = parseInt(fname.slice(1), 16);
     combined[key] = val.indices.map((idx, i) => (idx << index_shift) | (val.lengths[i] << length_shift));
@@ -78,17 +79,17 @@ export const enum $ {
     LENGTH_SHIFT = ${ length_shift },
 }
 
-export const text = 
+export const text =
 ${
-    text.match(/.{1,101}/g).map(s => '    ' + JSON.stringify(s)).join(' +\n')
+    text.match(/.{1,101}/g).map((s) => '    ' + JSON.stringify(s)).join(' +\n')
 };
 
 export const data = {
     ${
     // Object.keys sorts numeric keys numerically for us
     Object.keys(combined)
-    .filter(key => combined[key].find(x => x > 0)) // Filter out completely empty sections
-    .map(key => '0x' + ('00' + (+key).toString(16)).slice(-3) + ': [' + combined[key].join(',') + ']')
+    .filter((key) => combined[key].find((x) => x > 0)) // Filter out completely empty sections
+    .map((key) => '0x' + ('00' + (+key).toString(16)).slice(-3) + ': [' + combined[key].join(',') + ']')
     .join(',\n    ')
 }
 };
@@ -111,14 +112,14 @@ const enum $ {
 function parsePythonArray(str: string): string[] {
     const state = [$.START];
     let quote = '"';
-    
-    const data: string[] = [];
+
+    const output: string[] = [];
     let pending = '';
 
     for (const char of str) {
         switch (state.pop()) {
             case $.START:
-                if (char == '(') {
+                if (char === '(') {
                     state.push($.BEFORE);
                 } else {
                     state.push($.START);
@@ -126,12 +127,12 @@ function parsePythonArray(str: string): string[] {
                 break;
 
             case $.BEFORE:
-                if (char == '\'' || char == '"') {
+                if (char === '\'' || char === '"') {
                     quote = char;
                     state.push($.READING);
-                } else if (char == '#') {
+                } else if (char === '#') {
                     state.push($.BEFORE, $.COMMENT);
-                } else if (char == ')') {
+                } else if (char === ')') {
                     state.push($.END);
                 } else {
                     state.push($.BEFORE);
@@ -139,10 +140,10 @@ function parsePythonArray(str: string): string[] {
                 break;
 
             case $.READING:
-                if (char == '\\') {
+                if (char === '\\') {
                     state.push($.ESCAPE);
-                } else if (char == quote) {
-                    data.push(pending);
+                } else if (char === quote) {
+                    output.push(pending);
                     pending = '';
                     state.push($.AFTER);
                 } else {
@@ -157,11 +158,11 @@ function parsePythonArray(str: string): string[] {
                 break;
 
             case $.AFTER:
-                if (char == ',') {
+                if (char === ',') {
                     state.push($.BEFORE);
-                } else if (char == '#') {
+                } else if (char === '#') {
                     state.push($.AFTER, $.COMMENT);
-                } else if (char == ')') {
+                } else if (char === ')') {
                     state.push($.END);
                 } else {
                     state.push($.AFTER);
@@ -169,7 +170,7 @@ function parsePythonArray(str: string): string[] {
                 break;
 
             case $.COMMENT:
-                if (char == '\n') {
+                if (char === '\n') {
                     // Revert to previous state
                 } else {
                     state.push($.COMMENT);
@@ -177,25 +178,25 @@ function parsePythonArray(str: string): string[] {
                 break;
 
             case $.END:
-                if (char == ' ' || char == '\t' || char == '\n' || char == '\r' || char == '\f' || char == '\v') {
+                if (char === ' ' || char === '\t' || char === '\n' || char === '\r' || char === '\f' || char === '\v') {
                     state.push($.END);
-                } else if (char == '#') {
+                } else if (char === '#') {
                     state.push($.END, $.COMMENT);
                 }
                 break;
 
             default:
-                throw new Error("Invalid State!");
+                throw new Error('Invalid State!');
         }
     }
     if (state.length !== 0 || state.pop() !== $.END) {
-
+        // Extra data at end. Ignore?
     }
-    while (data.length < 256) {
-        data.push('');
+    while (output.length < 256) {
+        output.push('');
     }
-    if (data.length != 256) {
-        throw new Error("Too many elements in array!");
+    if (output.length !== 256) {
+        throw new Error('Too many elements in array!');
     }
-    return data;
+    return output;
 }

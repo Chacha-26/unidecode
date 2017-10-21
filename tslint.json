@@ -9,7 +9,7 @@
       "count",
       "debug",
       "dir", "dirxml",
-      "error",
+      // "error",
       "group", "groupCollapsed", "groupEnd",
       "info",
       "log",
