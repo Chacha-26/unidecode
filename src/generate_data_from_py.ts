@@ -1,5 +1,5 @@
 
-const SRC_DIR = 'src/data';
+const SRC_DIR = 'src/avian2/unidecode/unidecode';
 const DST_DIR = 'src';
 const FILE_FILTER = /^x[0-9a-f]{3}\.py$/;
 

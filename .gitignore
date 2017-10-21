@@ -3,6 +3,5 @@ node_modules
 coverage
 prebuild
 build
-src/data
 *.js
 !dist/bundle.js

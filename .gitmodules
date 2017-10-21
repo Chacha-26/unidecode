@@ -1,0 +1,3 @@
+[submodule "src/avian2/unidecode"]
+	path = src/avian2/unidecode
+	url = https://github.com/avian2/unidecode
