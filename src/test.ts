@@ -1,3 +1,5 @@
+// tslint:disable:max-line-length
+
 import test from 'ava';
 import unidecode from './index';
 
@@ -45,23 +47,22 @@ test('meta', (t) => {
     t.deepEqual(
         Array.from(ord(['\x34', '\x36', '\u{10ffff}'])),
         [0x34, 0x36, 0x10ffff],
-        'ord(Iterable<string>)'
+        'ord(Iterable<string>)',
     );
 
     t.is(chr(0x39), '9', 'chr(number)');
     t.deepEqual(
         Array.from(chr([0x34, 0x36, 0x10ffff])),
         ['\x34', '\x36', '\u{10ffff}'],
-        'chr(Iterable<number>)'
+        'chr(Iterable<number>)',
     );
 
     t.deepEqual(
         Array.from( range(6, 10) ),
         [6, 7, 8, 9],
-        'range(lo, hi)'
+        'range(lo, hi)',
     );
 });
-
 
 // Tests
 // Comments starting like // #
@@ -93,8 +94,8 @@ test('Non-BMP characters', (t) => {
 test('Circled Latin', (t) => {
     const a = ord('a');
     t.deepEqual(
-        Array.from( chr(range(a, a + 26)) ),
-        Array.from( chr(range(0x24d0, 0x24d0 + 26)), x => unidecode(x) )
+        Array.from(chr(range(a, a + 26))),
+        Array.from(chr(range(0x24d0, 0x24d0 + 26)), (x) => unidecode(x)),
     );
 });
 
@@ -102,12 +103,13 @@ test('Mathematical Latin', (t) => {
     // # 13 consecutive sequences of A-Z, a-z with some codepoints
     // # undefined. We just count the undefined ones and don't check
     // # positions.
-    const a = ord('a'), A = ord('A');
-    let empty = 0, alpha;
+    const a = ord('a');
+    const A = ord('A');
+    let empty = 0;
     for (const n of range(0x1d400, 0x1d6a4)) {
         const alpha = (n % 52 < 26) ? chr(A + n % 26) : chr(a + n % 26);
         const beta = unidecode(chr(n));
-        if (beta == '') {
+        if (beta === '') {
             empty += 1;
         } else {
             t.is(beta, alpha);
@@ -120,45 +122,47 @@ test('Mathematical digits', (t) => {
     const zero = ord('0');
     for (const n of range(0x1d7ce, 0x1d800)) {
         const a = chr(zero + ((n - 0x1d7ce) % 10));
-        const b = unidecode(chr(n))
+        const b = unidecode(chr(n));
         t.is(a, b);
     }
 });
 
 test('Specific', (t) => {
     // Hello, World!
-    t.is(unidecode('Hello, World!'), 'Hello, World!'); 
+    t.is(unidecode('Hello, World!'), 'Hello, World!');
     // '"\r\n
-    t.is(unidecode('\'"\r\n'), '\'"\r\n'); 
+    t.is(unidecode('\'"\r\n'), '\'"\r\n');
     // ČŽŠčžš
-    t.is(unidecode('\u010c\u017d\u0160\u010d\u017e\u0161'), 'CZSczs'); 
+    t.is(unidecode('\u010c\u017d\u0160\u010d\u017e\u0161'), 'CZSczs');
     // ア
-    t.is(unidecode('\u30a2'), 'a'); 
+    t.is(unidecode('\u30a2'), 'a');
     // α
-    t.is(unidecode('\u03b1'), 'a'); 
+    t.is(unidecode('\u03b1'), 'a');
     // а
-    t.is(unidecode('\u0430'), 'a'); 
+    t.is(unidecode('\u0430'), 'a');
     // château
-    t.is(unidecode('ch\u00e2teau'), 'chateau'); 
+    t.is(unidecode('ch\u00e2teau'), 'chateau');
     // viñedos
-    t.is(unidecode('vi\u00f1edos'), 'vinedos'); 
+    t.is(unidecode('vi\u00f1edos'), 'vinedos');
     // 北亰
-    t.is(unidecode('\u5317\u4eb0'), 'Bei Jing '); 
+    t.is(unidecode('\u5317\u4eb0'), 'Bei Jing ');
     // Efﬁcient
-    t.is(unidecode('Ef\ufb01cient'), 'Efficient'); 
+    t.is(unidecode('Ef\ufb01cient'), 'Efficient');
     // # https://github.com/iki/unidecode/commit/4a1d4e0a7b5a11796dc701099556876e7a520065
     // příliš žluťoučký kůň pěl ďábelské ódy
-    t.is(unidecode('p\u0159\u00edli\u0161 \u017elu\u0165ou\u010dk\u00fd k\u016f\u0148 p\u011bl \u010f\u00e1belsk\u00e9 \u00f3dy'), 'prilis zlutoucky kun pel dabelske ody'); 
+    t.is(unidecode('p\u0159\u00edli\u0161 \u017elu\u0165ou\u010dk\u00fd k\u016f\u0148 p\u011bl \u010f\u00e1belsk\u00e9 \u00f3dy'),
+        'prilis zlutoucky kun pel dabelske ody');
     // PŘÍLIŠ ŽLUŤOUČKÝ KŮŇ PĚL ĎÁBELSKÉ ÓDY
-    t.is(unidecode('P\u0158\u00cdLI\u0160 \u017dLU\u0164OU\u010cK\u00dd K\u016e\u0147 P\u011aL \u010e\u00c1BELSK\u00c9 \u00d3DY'), 'PRILIS ZLUTOUCKY KUN PEL DABELSKE ODY'); 
+    t.is(unidecode('P\u0158\u00cdLI\u0160 \u017dLU\u0164OU\u010cK\u00dd K\u016e\u0147 P\u011aL \u010e\u00c1BELSK\u00c9 \u00d3DY'),
+        'PRILIS ZLUTOUCKY KUN PEL DABELSKE ODY');
     // # Table that doesn't exist
     // ꔀ
-    t.is(unidecode('\ua500'), ''); 
-    //# Table that has less than 256 entries
+    t.is(unidecode('\ua500'), '');
+    // # Table that has less than 256 entries
     // ỿ
     // t.is(unidecode('\u1eff'), ''); // This test is no longer relevant, since all tables are of length 256 now.
 
-    t.is(unidecode('\u{1d5a0}'),'A');
+    t.is(unidecode('\u{1d5a0}'), 'A');
     t.is(unidecode('\u{1d5c4}\u{1d5c6}/\u{1d5c1}'), 'km/h');
     t.is(unidecode('\u2124\u{1d552}\u{1d55c}\u{1d552}\u{1d55b} \u{1d526}\u{1d52a}\u{1d51e} \u{1d4e4}\u{1d4f7}\u{1d4f2}\u{1d4ec}\u{1d4f8}\u{1d4ed}\u{1d4ee} \u{1d4c8}\u{1d4c5}\u212f\u{1d4b8}\u{1d4be}\u{1d4bb}\u{1d4be}\u{1d4c0}\u{1d4b6}\u{1d4b8}\u{1d4be}\u{1d4bf}\u212f \u{1d59f}\u{1d586} \u{1d631}\u{1d62a}\u{1d634}\u{1d622}\u{1d637}\u{1d626}?!'),
         'Zakaj ima Unicode specifikacije za pisave?!');
@@ -173,7 +177,7 @@ test('wordpress remove accents', (t) => {
     t.is(unidecode('\u00c0'), 'A'); t.is(unidecode('\u00c1'), 'A');
     t.is(unidecode('\u00c2'), 'A'); t.is(unidecode('\u00c3'), 'A');
     t.is(unidecode('\u00c5'), 'A');
-    t.is(unidecode('\u00c6'), 'AE');t.is(unidecode('\u00c7'), 'C');
+    t.is(unidecode('\u00c6'), 'AE'); t.is(unidecode('\u00c7'), 'C');
     t.is(unidecode('\u00c8'), 'E'); t.is(unidecode('\u00c9'), 'E');
     t.is(unidecode('\u00ca'), 'E'); t.is(unidecode('\u00cb'), 'E');
     t.is(unidecode('\u00cc'), 'I'); t.is(unidecode('\u00cd'), 'I');
@@ -187,7 +191,7 @@ test('wordpress remove accents', (t) => {
     t.is(unidecode('\u00e0'), 'a'); t.is(unidecode('\u00e1'), 'a');
     t.is(unidecode('\u00e2'), 'a'); t.is(unidecode('\u00e3'), 'a');
     t.is(unidecode('\u00e5'), 'a');
-    t.is(unidecode('\u00e6'), 'ae');t.is(unidecode('\u00e7'), 'c');
+    t.is(unidecode('\u00e6'), 'ae'); t.is(unidecode('\u00e7'), 'c');
     t.is(unidecode('\u00e8'), 'e'); t.is(unidecode('\u00e9'), 'e');
     t.is(unidecode('\u00ea'), 'e'); t.is(unidecode('\u00eb'), 'e');
     t.is(unidecode('\u00ec'), 'i'); t.is(unidecode('\u00ed'), 'i');
@@ -226,7 +230,7 @@ test('wordpress remove accents', (t) => {
     t.is(unidecode('\u012c'), 'I'); t.is(unidecode('\u012d'), 'i');
     t.is(unidecode('\u012e'), 'I'); t.is(unidecode('\u012f'), 'i');
     t.is(unidecode('\u0130'), 'I'); t.is(unidecode('\u0131'), 'i');
-    t.is(unidecode('\u0132'), 'IJ');t.is(unidecode('\u0133'), 'ij');
+    t.is(unidecode('\u0132'), 'IJ'); t.is(unidecode('\u0133'), 'ij');
     t.is(unidecode('\u0134'), 'J'); t.is(unidecode('\u0135'), 'j');
     t.is(unidecode('\u0136'), 'K'); t.is(unidecode('\u0137'), 'k');
     t.is(unidecode('\u0138'), 'k'); t.is(unidecode('\u0139'), 'L');
@@ -241,7 +245,7 @@ test('wordpress remove accents', (t) => {
     t.is(unidecode('\u014c'), 'O'); t.is(unidecode('\u014d'), 'o');
     t.is(unidecode('\u014e'), 'O'); t.is(unidecode('\u014f'), 'o');
     t.is(unidecode('\u0150'), 'O'); t.is(unidecode('\u0151'), 'o');
-    t.is(unidecode('\u0152'), 'OE');t.is(unidecode('\u0153'), 'oe');
+    t.is(unidecode('\u0152'), 'OE'); t.is(unidecode('\u0153'), 'oe');
     t.is(unidecode('\u0154'), 'R'); t.is(unidecode('\u0155'), 'r');
     t.is(unidecode('\u0156'), 'R'); t.is(unidecode('\u0157'), 'r');
     t.is(unidecode('\u0158'), 'R'); t.is(unidecode('\u0159'), 'r');
@@ -309,7 +313,7 @@ test('wordpress remove accents', (t) => {
     t.is(unidecode('\u1ed0'), 'O'); t.is(unidecode('\u1ed1'), 'o');
     t.is(unidecode('\u1eda'), 'O'); t.is(unidecode('\u1edb'), 'o');
     t.is(unidecode('\u1ee8'), 'U'); t.is(unidecode('\u1ee9'), 'u');
-    //# dot below
+    // # dot below
     t.is(unidecode('\u1ea0'), 'A'); t.is(unidecode('\u1ea1'), 'a');
     t.is(unidecode('\u1eac'), 'A'); t.is(unidecode('\u1ead'), 'a');
     t.is(unidecode('\u1eb6'), 'A'); t.is(unidecode('\u1eb7'), 'a');
@@ -345,11 +349,11 @@ test('wordpress remove accents', (t) => {
     t.is(unidecode('\u00f6'), 'o');
     t.is(unidecode('\u00fc'), 'u');
 
-    //# Known differences:
+    // # Known differences:
 
     // # t.is(unidecode('\u00de'), 'TH');
     // # t.is(unidecode('\u0149'), 'N');
-    // # t.is(unidecode('u00c5\ufffd'), 'n');
+    // # t.is(unidecode('\u00c5\ufffd'), 'n');
     // # t.is(unidecode('\u014b'), 'N');
 
     // # Euro Sign
@@ -367,27 +371,27 @@ test('Unicode text converter', (t) => {
 
     t.is(unidecode('\u{1d565}\u{1d559}\u{1d556} \u{1d562}\u{1d566}\u{1d55a}\u{1d554}\u{1d55c} \u{1d553}\u{1d563}\u{1d560}\u{1d568}\u{1d55f} \u{1d557}\u{1d560}\u{1d569} \u{1d55b}\u{1d566}\u{1d55e}\u{1d561}\u{1d564} \u{1d560}\u{1d567}\u{1d556}\u{1d563} \u{1d565}\u{1d559}\u{1d556} \u{1d55d}\u{1d552}\u{1d56b}\u{1d56a} \u{1d555}\u{1d560}\u{1d558} \u{1d7d9}\u{1d7da}\u{1d7db}\u{1d7dc}\u{1d7dd}\u{1d7de}\u{1d7df}\u{1d7e0}\u{1d7e1}\u{1d7d8}'),
         'the quick brown fox jumps over the lazy dog 1234567890',
-        'Double Struck (lower)'
+        'Double Struck (lower)',
     );
-    
+
     t.is(unidecode('\u{1d42d}\u{1d421}\u{1d41e} \u{1d42a}\u{1d42e}\u{1d422}\u{1d41c}\u{1d424} \u{1d41b}\u{1d42b}\u{1d428}\u{1d430}\u{1d427} \u{1d41f}\u{1d428}\u{1d431} \u{1d423}\u{1d42e}\u{1d426}\u{1d429}\u{1d42c} \u{1d428}\u{1d42f}\u{1d41e}\u{1d42b} \u{1d42d}\u{1d421}\u{1d41e} \u{1d425}\u{1d41a}\u{1d433}\u{1d432} \u{1d41d}\u{1d428}\u{1d420} \u{1d7cf}\u{1d7d0}\u{1d7d1}\u{1d7d2}\u{1d7d3}\u{1d7d4}\u{1d7d5}\u{1d7d6}\u{1d7d7}\u{1d7ce}'),
         'the quick brown fox jumps over the lazy dog 1234567890',
-        'Bold (lower)'
+        'Bold (lower)',
     );
 
     t.is(unidecode('\u{1d495}\u{1d489}\u{1d486} \u{1d492}\u{1d496}\u{1d48a}\u{1d484}\u{1d48c} \u{1d483}\u{1d493}\u{1d490}\u{1d498}\u{1d48f} \u{1d487}\u{1d490}\u{1d499} \u{1d48b}\u{1d496}\u{1d48e}\u{1d491}\u{1d494} \u{1d490}\u{1d497}\u{1d486}\u{1d493} \u{1d495}\u{1d489}\u{1d486} \u{1d48d}\u{1d482}\u{1d49b}\u{1d49a} \u{1d485}\u{1d490}\u{1d488} 1234567890'),
         'the quick brown fox jumps over the lazy dog 1234567890',
-        'Bold italic (lower)'
+        'Bold italic (lower)',
     );
-    
+
     t.is(unidecode('\u{1d4fd}\u{1d4f1}\u{1d4ee} \u{1d4fa}\u{1d4fe}\u{1d4f2}\u{1d4ec}\u{1d4f4} \u{1d4eb}\u{1d4fb}\u{1d4f8}\u{1d500}\u{1d4f7} \u{1d4ef}\u{1d4f8}\u{1d501} \u{1d4f3}\u{1d4fe}\u{1d4f6}\u{1d4f9}\u{1d4fc} \u{1d4f8}\u{1d4ff}\u{1d4ee}\u{1d4fb} \u{1d4fd}\u{1d4f1}\u{1d4ee} \u{1d4f5}\u{1d4ea}\u{1d503}\u{1d502} \u{1d4ed}\u{1d4f8}\u{1d4f0} 1234567890'),
         'the quick brown fox jumps over the lazy dog 1234567890',
-        'Bold script (lower)'
+        'Bold script (lower)',
     );
 
     t.is(unidecode('\u{1d599}\u{1d58d}\u{1d58a} \u{1d596}\u{1d59a}\u{1d58e}\u{1d588}\u{1d590} \u{1d587}\u{1d597}\u{1d594}\u{1d59c}\u{1d593} \u{1d58b}\u{1d594}\u{1d59d} \u{1d58f}\u{1d59a}\u{1d592}\u{1d595}\u{1d598} \u{1d594}\u{1d59b}\u{1d58a}\u{1d597} \u{1d599}\u{1d58d}\u{1d58a} \u{1d591}\u{1d586}\u{1d59f}\u{1d59e} \u{1d589}\u{1d594}\u{1d58c} 1234567890'),
         'the quick brown fox jumps over the lazy dog 1234567890',
-        'Fraktur (lower)'
+        'Fraktur (lower)',
     );
 
     t.is(unidecode('\uff34\uff28\uff25 \uff31\uff35\uff29\uff23\uff2b \uff22\uff32\uff2f\uff37\uff2e \uff26\uff2f\uff38 \uff2a\uff35\uff2d\uff30\uff33 \uff2f\uff36\uff25\uff32 \uff34\uff28\uff25 \uff2c\uff21\uff3a\uff39 \uff24\uff2f\uff27 \uff11\uff12\uff13\uff14\uff15\uff16\uff17\uff18\uff19\uff10'),
@@ -396,27 +400,27 @@ test('Unicode text converter', (t) => {
 
     t.is(unidecode('\u{1d54b}\u210d\u{1d53c} \u211a\u{1d54c}\u{1d540}\u2102\u{1d542} \u{1d539}\u211d\u{1d546}\u{1d54e}\u2115 \u{1d53d}\u{1d546}\u{1d54f} \u{1d541}\u{1d54c}\u{1d544}\u2119\u{1d54a} \u{1d546}\u{1d54d}\u{1d53c}\u211d \u{1d54b}\u210d\u{1d53c} \u{1d543}\u{1d538}\u2124\u{1d550} \u{1d53b}\u{1d546}\u{1d53e} \u{1d7d9}\u{1d7da}\u{1d7db}\u{1d7dc}\u{1d7dd}\u{1d7de}\u{1d7df}\u{1d7e0}\u{1d7e1}\u{1d7d8}'),
         'THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 1234567890',
-        'Double Struck (upper)'
+        'Double Struck (upper)',
     );
-    
+
     t.is(unidecode('\u{1d413}\u{1d407}\u{1d404} \u{1d410}\u{1d414}\u{1d408}\u{1d402}\u{1d40a} \u{1d401}\u{1d411}\u{1d40e}\u{1d416}\u{1d40d} \u{1d405}\u{1d40e}\u{1d417} \u{1d409}\u{1d414}\u{1d40c}\u{1d40f}\u{1d412} \u{1d40e}\u{1d415}\u{1d404}\u{1d411} \u{1d413}\u{1d407}\u{1d404} \u{1d40b}\u{1d400}\u{1d419}\u{1d418} \u{1d403}\u{1d40e}\u{1d406} \u{1d7cf}\u{1d7d0}\u{1d7d1}\u{1d7d2}\u{1d7d3}\u{1d7d4}\u{1d7d5}\u{1d7d6}\u{1d7d7}\u{1d7ce}'),
         'THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 1234567890',
-        'Bold (upper)'
+        'Bold (upper)',
     );
 
     t.is(unidecode('\u{1d47b}\u{1d46f}\u{1d46c} \u{1d478}\u{1d47c}\u{1d470}\u{1d46a}\u{1d472} \u{1d469}\u{1d479}\u{1d476}\u{1d47e}\u{1d475} \u{1d46d}\u{1d476}\u{1d47f} \u{1d471}\u{1d47c}\u{1d474}\u{1d477}\u{1d47a} \u{1d476}\u{1d47d}\u{1d46c}\u{1d479} \u{1d47b}\u{1d46f}\u{1d46c} \u{1d473}\u{1d468}\u{1d481}\u{1d480} \u{1d46b}\u{1d476}\u{1d46e} 1234567890'),
         'THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 1234567890',
-        'Bold italic (upper)'
+        'Bold italic (upper)',
     );
-    
+
     t.is(unidecode('\u{1d4e3}\u{1d4d7}\u{1d4d4} \u{1d4e0}\u{1d4e4}\u{1d4d8}\u{1d4d2}\u{1d4da} \u{1d4d1}\u{1d4e1}\u{1d4de}\u{1d4e6}\u{1d4dd} \u{1d4d5}\u{1d4de}\u{1d4e7} \u{1d4d9}\u{1d4e4}\u{1d4dc}\u{1d4df}\u{1d4e2} \u{1d4de}\u{1d4e5}\u{1d4d4}\u{1d4e1} \u{1d4e3}\u{1d4d7}\u{1d4d4} \u{1d4db}\u{1d4d0}\u{1d4e9}\u{1d4e8} \u{1d4d3}\u{1d4de}\u{1d4d6} 1234567890'),
         'THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 1234567890',
-        'Bold script (upper)'
+        'Bold script (upper)',
     );
 
     t.is(unidecode('\u{1d57f}\u{1d573}\u{1d570} \u{1d57c}\u{1d580}\u{1d574}\u{1d56e}\u{1d576} \u{1d56d}\u{1d57d}\u{1d57a}\u{1d582}\u{1d579} \u{1d571}\u{1d57a}\u{1d583} \u{1d575}\u{1d580}\u{1d578}\u{1d57b}\u{1d57e} \u{1d57a}\u{1d581}\u{1d570}\u{1d57d} \u{1d57f}\u{1d573}\u{1d570} \u{1d577}\u{1d56c}\u{1d585}\u{1d584} \u{1d56f}\u{1d57a}\u{1d572} 1234567890'),
         'THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG 1234567890',
-        'Fraktur (upper)'
+        'Fraktur (upper)',
     );
 });
 
