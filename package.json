@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "description": "Lossy Unicode -> Ascii converter. Based on the python Unidecode package.",
   "readme": "README.md",
-  "main": "dist/bundle.js",
+  "main": "dist/bundle.umd.js",
   "dependencies": {},
   "devDependencies": {
     "@types/node": "^8.0.41",

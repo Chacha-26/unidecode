@@ -1,9 +1,9 @@
-export default {
+export default ['amd', 'cjs', 'es', 'iife', 'umd'].map((fmt) => ({
     input: 'build/index.js',
     output: {
-        file: 'dist/bundle.js',
-        format: 'umd',
+        file: `dist/bundle.${fmt}.js`,
+        format: `${fmt}`,
         name: 'unidecode',
     },
-    exports: 'default',
-};
+    exports: 'default'
+}));
