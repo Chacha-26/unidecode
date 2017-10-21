@@ -3,7 +3,7 @@
         "target": "es2016",
         "moduleResolution": "node",
         "module": "commonjs",
-        "lib": [ "es2015" ]
+        "lib": [ "es2017" ]
     },
     "files": [
         "generate_data_from_py.ts"
