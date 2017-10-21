@@ -5,3 +5,4 @@ prebuild
 build
 src/data
 *.js
+!dist/bundle.js

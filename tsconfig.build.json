@@ -5,6 +5,7 @@
     "compilerOptions": {
         "noEmit": false,
         "sourceMap": true,
+        "module": "es6",
         "outDir": "build"
     },
 
