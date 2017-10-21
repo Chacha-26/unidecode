@@ -3,9 +3,14 @@
 
     "compilerOptions": {
         "noEmit": true,
+        "rootDir": "./src/",
         "target": "es2016",
         "moduleResolution": "node",
         "module": "commonjs",
         "lib": [ "es2017" ]
-    }
+    },
+
+    "include": [
+        "src/*.ts"
+    ]
 }

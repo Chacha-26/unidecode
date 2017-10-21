@@ -1,12 +1,10 @@
 
-const SRC_DIR = 'raw_data';
-const DST_DIR = 'generated';
+const SRC_DIR = 'src/data';
+const DST_DIR = 'src';
 const SHIFT_LENGTH = true;
 const FILE_FILTER = /^x[0-9a-f]{3}\.py$/;
 
 import * as fs from 'fs';
-
-// Format
 
 interface Info {
     indices: number[];
@@ -14,7 +12,7 @@ interface Info {
 }
 
 const data = new Map<string, Info>();
-let str = '';
+let text = '[?] oea+uiiOEthr-s|chngldAshU';
 
 const files = fs.readdirSync(SRC_DIR);
 
@@ -27,10 +25,10 @@ for (const fname of files) {
         const lengths = parsed.map(char => char.length);
 
         const indices = parsed.map((char, idx) => {
-            let found = str.indexOf(char);
+            let found = text.indexOf(char);
             if (found < 0) {
-                found = str.length;
-                str += char;
+                found = text.length;
+                text += char;
             }
             return found;
         });
@@ -57,9 +55,10 @@ if (index_bits + length_bits > 32) {
 }
 
 const index_mask = (1 << index_bits) - 1;
-const index_shift = SHIFT_LENGTH ? 0 : index_bits;
 const length_mask = (1 << length_bits) - 1;
-const length_shift = SHIFT_LENGTH ? length_bits : 0;
+
+const index_shift = SHIFT_LENGTH ? 0 : length_bits;
+const length_shift = SHIFT_LENGTH ? index_bits : 0;
 
 let combined = Object.create(null);
 for (const [fname, val] of data) {
@@ -67,7 +66,8 @@ for (const [fname, val] of data) {
     combined[key] = val.indices.map((idx, i) => (idx << index_shift) | (val.lengths[i] << length_shift));
 }
 
-fs.writeFileSync(DST_DIR + '/index.ts', `// This file was automatically generated. Changes will be undone.
+// Write data to file
+fs.writeFileSync(DST_DIR + '/data.ts', `// This file was automatically generated. Changes will be undone.
 
 export const enum $ {
     INDEX_BITS = ${ index_bits },
@@ -78,22 +78,21 @@ export const enum $ {
     LENGTH_SHIFT = ${ length_shift },
 }
 
-export const str = 
+export const text = 
 ${
-    str.match(/.{1,101}/g).map(s => '    ' + JSON.stringify(s)).join(' +\n')
+    text.match(/.{1,101}/g).map(s => '    ' + JSON.stringify(s)).join(' +\n')
 };
 
-export const data = {${
+export const data = {
+    ${
     // Object.keys sorts numeric keys numerically for us
     Object.keys(combined)
     .filter(key => combined[key].find(x => x > 0)) // Filter out completely empty sections
-    .map(key => '\n    0x' + ('00' + (+key).toString(16)).slice(-3) + ': [' + combined[key] + ']')
+    .map(key => '0x' + ('00' + (+key).toString(16)).slice(-3) + ': [' + combined[key].join(',') + ']')
+    .join(',\n    ')
 }
 };
-
 `, { encoding: 'utf8' });
-
-process.exit(0);
 
 // Other stuff below
 
@@ -107,6 +106,8 @@ const enum $ {
     END,
 }
 
+// Simple state machine for parsing a single array of strings from a python file
+// Does not support triple-quoted strings
 function parsePythonArray(str: string): string[] {
     const state = [$.START];
     let quote = '"';

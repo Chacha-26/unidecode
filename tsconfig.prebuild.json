@@ -1,12 +1,13 @@
 {
     "$schema": "http://json.schemastore.org/tsconfig",
-    "extends": "tsconfig.json",
+    "extends": "./tsconfig.json",
 
     "compilerOptions": {
-        "noEmit": false
+        "noEmit": false,
+        "outDir": "prebuild"
     },
 
-    "files": [
-        "generate_data_from_py.ts"
+    "include": [
+        "src/generate_data_from_py.ts"
     ]
 }

@@ -9,13 +9,19 @@
   "dependencies": {
   },
   "devDependencies": {
+    "ava": "0.19.1",
     "typescript": "^2.3.0"
   },
+
   "scripts": {
-    "prebuild": "tsc -p tsconfig.prebuild.json && node generate_data_from_py.js",
+    "prebuild": "tsc -p tsconfig.prebuild.json && node prebuild/generate_data_from_py.js",
     "build": "tsc -p tsconfig.build.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+
+    "pretest": "tsc -p tsconfig.build.json",
+    "test": "nyc --reporter=lcov ava build/test.js",
+    "posttest": "nyc report"
   },
+
   "author": "Chacha-26 <chacha-26@protonmail.com>",
   "license": "ISC"
 }
