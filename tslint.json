@@ -1,0 +1,28 @@
+{
+  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/tslint.json",
+  "enabled": true,
+  "extends": "tslint:recommended",
+  "rules": {
+    "no-conditional-assignment": false,
+    "no-console": [true,
+      "assert",
+      "count",
+      "debug",
+      "dir", "dirxml",
+      "error",
+      "group", "groupCollapsed", "groupEnd",
+      "info",
+      "log",
+      "profile", "profileEnd",
+      "table",
+      "time", "timeEnd", "timeStamp",
+      "trace",
+      "warn"
+    ],
+    "no-bitwise": false,
+    "object-literal-sort-keys": false,
+    "quotemark": [ true, "single" ],
+    "triple-equals": [ true, "allow-null-check" ],
+    "variable-name": [ true, "ban-keywords", "check-format", "allow-snake-case" ]
+  }
+}
