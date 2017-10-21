@@ -22,7 +22,7 @@ for (const fname of files) {
 function asStr(arr: string[]) {
     const savings = arr.length * 2 - '"".split("?")'.length;
     if (savings > 0) {
-        for (const opt of ' ,;{}') {
+        for (const opt of '; `') {
             const joined = arr.join(opt);
             if (joined.split(opt).length === arr.length) {
                 return `${ JSON.stringify(joined)  }.split("${opt}")`;
