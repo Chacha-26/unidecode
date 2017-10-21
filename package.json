@@ -4,6 +4,7 @@
   "name": "@chacha-26/unidecode",
   "version": "1.0.0",
   "description": "Lossy Unicode -> Ascii converter. Based on the python Unidecode package.",
+  "readme": "README.md",
   "main": "dist/bundle.js",
   "dependencies": {},
   "devDependencies": {
@@ -18,10 +19,14 @@
   "scripts": {
     "prebuild": "tsc -p tsconfig.data.json && node build/generate_data_from_py.js",
     "build": "tsc -p tsconfig.build.json",
-    "postbuild": "rollup build/index.js --output.name unidecode --output.format iife --output.file dist/bundle.js",
+    "postbuild": "rollup -c",
     "pretest": "tsc -p tsconfig.test.json",
     "test": "nyc --reporter=lcov ava build/test.js",
     "posttest": "nyc report"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Chacha-26/unidecode.git"
   },
   "author": "Chacha-26 <chacha-26@protonmail.com>",
   "license": "ISC"

@@ -8,7 +8,7 @@ Copy those files into src/data then run `npm run build`.
 
 ## Usage
 ```js
-import u2a from "@chacha-26/unidecode";
+import unidecode from "@chacha-26/unidecode";
 const example = "𝕷𝖔𝖗𝖊𝖒 𝖎𝖕𝖘𝖚𝖒 𝖉𝖔𝖑𝖔𝖗 𝖘𝖎𝖙 𝖆𝖒𝖊𝖙, 𝖈𝖔𝖓𝖘𝖊𝖈𝖙𝖊𝖙𝖚𝖗 𝖆𝖉𝖎𝖕𝖎𝖘𝖈𝖎𝖓𝖌 𝖊𝖑𝖎𝖙";
-console.log(u2a(example)); // Lorem ipsum dolor sit amet, consectetur adipiscing elit
+console.log(unidecode(example)); // Lorem ipsum dolor sit amet, consectetur adipiscing elit
 ```

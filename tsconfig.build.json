@@ -4,7 +4,7 @@
 
     "compilerOptions": {
         "noEmit": false,
-        "sourceMap": true,
+        "removeComments": true,
         "module": "es6",
         "outDir": "build"
     },
