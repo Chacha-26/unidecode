@@ -1,0 +1,15 @@
+{
+  "name": "u2a",
+  "version": "0.0.0",
+  "description": "Lossy Unicode -> Ascii converter. Based on the python Unidecode package.",
+  "main": "index.js",
+  "dependencies": {
+    "typescript": "^2.4.0-dev.20170524"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Chacha-26 <chacha-26@protonmail.com>",
+  "license": "ISC"
+}
