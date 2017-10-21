@@ -2,7 +2,7 @@ import { data } from './data';
 
 const nonAscii = /[^\x00-\x7f]/gu;
 
-const u2a = (str: string): string => String(str).replace(nonAscii, convert);
+const unidecode = (str: string): string => String(str).replace(nonAscii, convert);
 
 const convert = (char: string): string => {
     const code = char.codePointAt(0);
@@ -11,4 +11,4 @@ const convert = (char: string): string => {
     return hi in data ? data[hi][lo] : '';
 };
 
-export default u2a;
+export default unidecode;
