@@ -1,7 +1,6 @@
 .vscode
 node_modules
 coverage
-prebuild
 build
 *.js
 !dist/bundle.js

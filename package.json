@@ -16,10 +16,10 @@
     "typescript": "^2.5.3"
   },
   "scripts": {
-    "prebuild": "tsc -p tsconfig.prebuild.json && node prebuild/generate_data_from_py.js",
+    "prebuild": "tsc -p tsconfig.data.json && node build/generate_data_from_py.js",
     "build": "tsc -p tsconfig.build.json",
     "postbuild": "rollup build/index.js --output.name unidecode --output.format iife --output.file dist/bundle.js",
-    "pretest": "tsc -p tsconfig.build.json",
+    "pretest": "tsc -p tsconfig.test.json",
     "test": "nyc --reporter=lcov ava build/test.js",
     "posttest": "nyc report"
   },
