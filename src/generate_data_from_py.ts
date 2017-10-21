@@ -18,28 +18,29 @@ for (const fname of files) {
     }
 }
 
+// Closure style array compression
+function asStr(arr: string[]) {
+    const savings = arr.length * 2 - '"".split("?")'.length;
+    if (savings > 0) {
+        for (const opt of ' ,;{}') {
+            const joined = arr.join(opt);
+            if (joined.split(opt).length === arr.length) {
+                return `${ JSON.stringify(joined)  }.split("${opt}")`;
+            }
+        }
+    }
+    return JSON.stringify(arr);
+}
+
 // Write data to file
 fs.writeFileSync(DST_DIR + '/data.ts', `// This file was automatically generated. Changes will be undone.
 // tslint:disable
-const a = "", b = "[?]", c = "[?] ";
 export const data = {
     ${
     // Object.keys sorts numeric keys numerically for us
     Object.keys(data)
     .filter((key) => data[key].some((x) => x !== '')) // Filter out completely empty sections
-    .map((key) => '0x' + ('00' + (+key).toString(16)).slice(-3) + ': [' + data[key].map((str) => {
-        switch (str) {
-        case '':
-            return 'a';
-        case '[?]':
-            return 'b';
-        case '[?] ':
-            return 'c';
-        default:
-            return JSON.stringify(str);
-        }
-    }).join(', ') + ']')
-    .join(',\n    ')
+    .map((key) => '0x' + ('00' + (+key).toString(16)).slice(-3) + ': ' + asStr(data[key])).join(',\n    ')
 }
 };
 `, { encoding: 'utf8' });
