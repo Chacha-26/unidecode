@@ -1,18 +1,18 @@
 {
   "$schema": "http://json.schemastore.org/package",
   "private": true,
-  "name": "u2a",
-  "version": "0.0.0",
+  "name": "@chacha-26/unidecode",
+  "version": "1.0.0",
   "description": "Lossy Unicode -> Ascii converter. Based on the python Unidecode package.",
   "main": "dist/bundle.js",
   "dependencies": {},
   "devDependencies": {
-    "ava": "^0.19.1",
-    "nyc": "^10.3.2",
+    "ava": "^0.22.0",
+    "nyc": "^11.2.1",
     "rollup": "^0.50.0",
-    "tslint": "^5.3.2",
+    "tslint": "^5.7.0",
     "tslint-language-service": "^0.9.6",
-    "typescript": "^2.3.3"
+    "typescript": "^2.5.3"
   },
   "scripts": {
     "prebuild": "tsc -p tsconfig.prebuild.json && node prebuild/generate_data_from_py.js",
