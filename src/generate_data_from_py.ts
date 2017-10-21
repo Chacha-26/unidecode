@@ -1,18 +1,11 @@
 
 const SRC_DIR = 'src/data';
 const DST_DIR = 'src';
-const SHIFT_LENGTH = true;
 const FILE_FILTER = /^x[0-9a-f]{3}\.py$/;
 
 import * as fs from 'fs';
 
-interface Info {
-    indices: number[];
-    lengths: number[];
-}
-
-const data = new Map<string, Info>();
-let text = '[?] oea+uiiOEthr-s|chngldAshU';
+const data = Object.create(null);
 
 const files = fs.readdirSync(SRC_DIR);
 
@@ -20,76 +13,32 @@ for (const fname of files) {
     if (FILE_FILTER.test(fname)) {
 
         const raw = fs.readFileSync(SRC_DIR + '/' + fname, 'utf8');
-        const parsed = parsePythonArray(raw);
-
-        const lengths = parsed.map((char) => char.length);
-
-        const indices = parsed.map((char, idx) => {
-            let found = text.indexOf(char);
-            if (found < 0) {
-                found = text.length;
-                text += char;
-            }
-            return found;
-        });
-
-        data.set(fname.slice(0, 4), { indices, lengths });
+        const key = parseInt(fname.slice(1, 4), 16);
+        data[key] = parsePythonArray(raw);
     }
-}
-
-let max_length = 0;
-let max_index = 0;
-for (const val of data.values()) {
-    max_index = Math.max(max_index, ...val.indices);
-    max_length = Math.max(max_length, ...val.lengths);
-}
-// max_index = 00000000 00000000 00000000 00001010
-// clz(...)  = 8 + 8 + 8 + 4 = 32 - 4;
-// 32 - ...  = 4;
-// ...       = number of bits needed
-const index_bits = 32 - Math.clz32(max_index);
-const length_bits = 32 - Math.clz32(max_length);
-
-if (index_bits + length_bits > 32) {
-    console.error(`${index_bits} + ${length_bits} = ${index_bits + length_bits} > 32.`);
-    process.exit(1);
-}
-
-const index_mask = (1 << index_bits) - 1;
-const length_mask = (1 << length_bits) - 1;
-
-const index_shift = SHIFT_LENGTH ? 0 : length_bits;
-const length_shift = SHIFT_LENGTH ? index_bits : 0;
-
-const combined = Object.create(null);
-for (const [fname, val] of data) {
-    const key = parseInt(fname.slice(1), 16);
-    combined[key] = val.indices.map((idx, i) => (idx << index_shift) | (val.lengths[i] << length_shift));
 }
 
 // Write data to file
 fs.writeFileSync(DST_DIR + '/data.ts', `// This file was automatically generated. Changes will be undone.
-
-export const enum $ {
-    INDEX_BITS = ${ index_bits },
-    INDEX_MASK = ${ index_mask },
-    INDEX_SHIFT = ${ index_shift },
-    LENGTH_BITS = ${ length_bits },
-    LENGTH_MASK = ${ length_mask },
-    LENGTH_SHIFT = ${ length_shift },
-}
-
-export const text =
-${
-    text.match(/.{1,101}/g).map((s) => '    ' + JSON.stringify(s)).join(' +\n')
-};
-
+// tslint:disable
+const a = "", b = "[?]", c = "[?] ";
 export const data = {
     ${
     // Object.keys sorts numeric keys numerically for us
-    Object.keys(combined)
-    .filter((key) => combined[key].find((x) => x > 0)) // Filter out completely empty sections
-    .map((key) => '0x' + ('00' + (+key).toString(16)).slice(-3) + ': [' + combined[key].join(',') + ']')
+    Object.keys(data)
+    .filter((key) => data[key].some((x) => x !== '')) // Filter out completely empty sections
+    .map((key) => '0x' + ('00' + (+key).toString(16)).slice(-3) + ': [' + data[key].map((str) => {
+        switch (str) {
+        case '':
+            return 'a';
+        case '[?]':
+            return 'b';
+        case '[?] ':
+            return 'c';
+        default:
+            return JSON.stringify(str);
+        }
+    }).join(', ') + ']')
     .join(',\n    ')
 }
 };
