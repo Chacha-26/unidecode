@@ -1,51 +1,24 @@
-
-const SRC_DIR = 'src/avian2/unidecode/unidecode';
-const DST_DIR = 'src';
-const FILE_FILTER = /^x[0-9a-f]{3}\.py$/;
-
 import * as fs from 'fs';
 
-const data = Object.create(null);
+const SRC_DIR = 'src/avian2/unidecode/unidecode';
+const FILE_FILTER = /^x([0-9a-f]{3})\.py$/;
 
-const files = fs.readdirSync(SRC_DIR);
+export default () => {
+    const data = Object.create(null) as Record<string, string[]>;
+    const files = fs.readdirSync(SRC_DIR);
 
-for (const fname of files) {
-    if (FILE_FILTER.test(fname)) {
-
-        const raw = fs.readFileSync(SRC_DIR + '/' + fname, 'utf8');
-        const key = parseInt(fname.slice(1, 4), 16);
-        data[key] = parsePythonArray(raw);
-    }
-}
-
-// Closure style array compression
-function asStr(arr: string[]) {
-    const savings = arr.length * 2 - '"".split("?")'.length;
-    if (savings > 0) {
-        for (const opt of '; `') {
-            const joined = arr.join(opt);
-            if (joined.split(opt).length === arr.length) {
-                return `${ JSON.stringify(joined)  }.split("${opt}")`;
-            }
+    for (const filename of files) {
+        const match = filename.match(FILE_FILTER);
+        if (match) {
+            const raw = fs.readFileSync(SRC_DIR + '/' + filename, 'utf8');
+            const parsed = parsePythonArray(raw);
+            const key = parseInt(match[1], 16);
+            data[key] = parsed;
         }
     }
-    return JSON.stringify(arr);
-}
 
-// Write data to file
-fs.writeFileSync(DST_DIR + '/data.ts', `// This file was automatically generated. Changes will be undone.
-// tslint:disable
-export const data = {
-    ${
-    // Object.keys sorts numeric keys numerically for us
-    Object.keys(data)
-    .filter((key) => data[key].some((x) => x !== '')) // Filter out completely empty sections
-    .map((key) => '0x' + ('00' + (+key).toString(16)).slice(-3) + ': ' + asStr(data[key])).join(',\n    ')
-}
+    return data;
 };
-`, { encoding: 'utf8' });
-
-// Other stuff below
 
 const enum $ {
     START,   // Up until the first (
@@ -145,7 +118,7 @@ function parsePythonArray(str: string): string[] {
     while (output.length < 256) {
         output.push('');
     }
-    if (output.length !== 256) {
+    if (output.length > 256) {
         throw new Error('Too many elements in array!');
     }
     return output;

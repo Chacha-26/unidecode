@@ -1,5 +1,5 @@
 export default ['amd', 'cjs', 'es', 'iife', 'umd'].map((fmt) => ({
-    input: 'build/index.js',
+    input: 'dist/index.js',
     output: {
         file: `dist/bundle.${fmt}.js`,
         format: `${fmt}`,

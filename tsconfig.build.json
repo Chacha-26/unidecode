@@ -5,8 +5,8 @@
     "compilerOptions": {
         "noEmit": false,
         "removeComments": true,
-        "module": "es6",
-        "outDir": "build"
+        "module": "esnext",
+        "outDir": "dist"
     },
 
     "include": [

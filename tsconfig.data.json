@@ -4,11 +4,12 @@
 
     "compilerOptions": {
         "noEmit": false,
+        "sourceMap": true,
         "module": "commonjs",
         "outDir": "build"
     },
 
     "include": [
-        "src/generate_data_from_py.ts"
+        "src/generate_data.ts"
     ]
 }

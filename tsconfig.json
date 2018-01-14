@@ -4,7 +4,8 @@
     "compilerOptions": {
         "noEmit": true,
         "rootDir": "./src/",
-        "target": "es2016",
+        "target": "es2017",
+        "module": "commonjs",
         "moduleResolution": "node",
         "listEmittedFiles": true,
         "lib": [ "es2017" ],

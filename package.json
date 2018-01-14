@@ -1,33 +1,33 @@
 {
-  "$schema": "http://json.schemastore.org/package",
-  "private": true,
-  "name": "@chacha-26/unidecode",
-  "version": "1.0.0",
-  "description": "Lossy Unicode -> Ascii converter. Based on the python Unidecode package.",
-  "readme": "README.md",
-  "main": "dist/bundle.umd.js",
-  "dependencies": {},
-  "devDependencies": {
-    "@types/node": "^8.0.41",
-    "ava": "^0.22.0",
-    "nyc": "^11.2.1",
-    "rollup": "^0.50.0",
-    "tslint": "^5.7.0",
-    "tslint-language-service": "^0.9.6",
-    "typescript": "^2.5.3"
-  },
-  "scripts": {
-    "prebuild": "tsc -p tsconfig.data.json && node build/generate_data_from_py.js",
-    "build": "tsc -p tsconfig.build.json",
-    "postbuild": "rollup -c",
-    "pretest": "tsc -p tsconfig.test.json",
-    "test": "nyc --reporter=lcov ava build/test.js",
-    "posttest": "nyc report"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Chacha-26/unidecode.git"
-  },
-  "author": "Chacha-26 <chacha-26@protonmail.com>",
-  "license": "ISC"
+    "$schema": "http://json.schemastore.org/package",
+    "private": true,
+    "name": "@chacha-26/unidecode",
+    "version": "1.0.0",
+    "description": "Lossy Unicode -> Ascii converter. Based on the perl Unidecode package and other ports.",
+    "readme": "README.md",
+    "main": "dist/index.js",
+    "dependencies": {},
+    "devDependencies": {
+        "@types/node": "^8.0.41",
+        "ava": "^0.24.0",
+        "nyc": "^11.4.1",
+        "rimraf": "^2.6.2",
+        "rollup": "^0.50.0",
+        "tslint": "^5.7.0",
+        "tslint-language-service": "^0.9.6",
+        "typescript": "^2.5.3"
+    },
+    "scripts": {
+        "clean": "node task clean",
+        "build": "node task build",
+        "test": "node task test",
+        "bundle": "node task bundle",
+        "data": "node task data"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Chacha-26/unidecode.git"
+    },
+    "author": "Chacha-26 <chacha-26@protonmail.com>",
+    "license": "GPL-2.0+"
 }
